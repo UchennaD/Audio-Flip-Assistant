@@ -1,0 +1,5 @@
+librosa>=0.10
+numpy
+soundfile
+demucs>=4.0
+basic-pitch

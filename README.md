@@ -16,4 +16,4 @@ Only processes files you provide. Clearing samples for release is your responsib
 4. [ ] Simple web UI (upload, preview stems, download MIDI)
 5. [ ] Auth, upload validation, file size/type limits, auto-delete after 24h
 6. [ ] THREAT_MODEL.md and PRIVACY.md
-7. [ ] Dockerize, deploy, put the live link on your resume
+7. [ ] Dockerize, deploy, get the live link 

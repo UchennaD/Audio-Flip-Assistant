@@ -1,8 +1,10 @@
 """Audio -> MIDI via Spotify's Basic Pitch."""
 from pathlib import Path
-from basic_pitch.inference import predict_and_save
 
 
 def to_midi(audio_path, out_dir="midi"):
-    Path(out_dir).mkdir(exist_ok=True)
-    predict_and_save([str(audio_path)], out_dir, True, False, False, False)
+    from basic_pitch.inference import predict_and_save  # heavy import, load on demand
+
+    Path(out_dir).mkdir(parents=True, exist_ok=True)
+    predict_and_save([str(audio_path)], str(out_dir), True, False, False, False)
+    return Path(out_dir) / f"{Path(audio_path).stem}_basic_pitch.mid"

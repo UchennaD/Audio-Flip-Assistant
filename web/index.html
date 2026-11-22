@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Flip Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="unit" id="unit">
+  <div class="head">
+    <div class="brand">Flip Assistant<small>BPM · KEY · STEMS · MIDI</small></div>
+    <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+
+  <div class="lcd" id="lcd">
+    <div class="lcd-top"><span id="fname">no file loaded</span><span class="dim" id="status">IDLE</span></div>
+    <div class="wavebox">
+      <canvas id="wave" aria-label="Waveform with beat grid"></canvas>
+      <div class="idle" id="idle"><div><b>Drop a track here</b><small>mp3 · wav · flac · m4a · ogg · up to 100 MB</small></div></div>
+    </div>
+    <div class="readout">
+      <div><small>bpm</small><b id="bpm">---</b></div>
+      <div class="k"><small>key</small><b id="key">---</b></div>
+      <div class="l"><small>length</small><b id="len">-:--</b></div>
+    </div>
+  </div>
+  <input type="file" id="file" accept=".mp3,.wav,.flac,.m4a,.ogg,.aif,.aiff,audio/*" hidden>
+
+  <div class="keys four">
+    <button class="key" id="rewind" aria-label="Back to start"><svg viewBox="0 0 24 24"><path d="M6 5v14M19 6l-9 6 9 6z"/></svg></button>
+    <button class="key" id="play" aria-label="Play" disabled><svg class="solid" id="playicon" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg></button>
+    <button class="key" id="loop" aria-pressed="false" aria-label="Loop"><i class="led"></i><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></svg></button>
+    <button class="key scan" id="scan" aria-label="Scan a new track"><span class="silk">Scan</span></button>
+  </div>
+
+  <div class="keys three" role="tablist" aria-label="Mode">
+    <button class="key" role="tab" aria-selected="true" data-tab="analyze"><i class="led"></i><span class="silk">Analyze</span></button>
+    <button class="key" role="tab" aria-selected="false" data-tab="stems"><i class="led"></i><span class="silk">Stems</span></button>
+    <button class="key" role="tab" aria-selected="false" data-tab="settings"><i class="led"></i><span class="silk">Setup</span></button>
+  </div>
+
+  <section class="view on" id="v-analyze">
+    <div id="tempo-block">
+      <div class="label-row silk">Tempo reads as</div>
+      <div class="keys three" id="tempo" role="group" aria-label="Tempo candidates">
+        <button class="key" aria-pressed="false" data-pick="half_time" disabled><i class="led"></i><span class="silk">Half</span><span class="sub">--</span></button>
+        <button class="key" aria-pressed="false" data-pick="bpm" disabled><i class="led"></i><span class="silk">Read</span><span class="sub">--</span></button>
+        <button class="key" aria-pressed="false" data-pick="double_time" disabled><i class="led"></i><span class="silk">Double</span><span class="sub">--</span></button>
+      </div>
+    </div>
+    <div class="label-row silk">Key also fits</div>
+    <div class="keys three" id="altkeys">
+      <button class="key" disabled><i class="led"></i><span class="silk">--</span><span class="sub">&nbsp;</span></button>
+      <button class="key" disabled><i class="led"></i><span class="silk">--</span><span class="sub">&nbsp;</span></button>
+      <button class="key" disabled><i class="led"></i><span class="silk">--</span><span class="sub">&nbsp;</span></button>
+    </div>
+  </section>
+
+  <section class="view" id="v-stems">
+    <div class="label-row silk" id="stems-title">Stems</div>
+    <p class="empty" id="stems-empty">Scan a track with stem splitting on to get channels here.</p>
+    <div class="mixer" id="mixer"></div>
+    <div class="keys two">
+      <a class="key" id="export-stems" aria-disabled="true"><span class="silk">Export stems</span></a>
+      <a class="key scan" id="export-midi" aria-disabled="true"><span class="silk">Export MIDI</span></a>
+    </div>
+    <div class="foot"><span>MIDI works on vocals, bass, other</span><span>drums stay audio</span></div>
+  </section>
+
+  <section class="view" id="v-settings">
+    <div class="dips">
+      <div class="dip"><div><h3>Split stems</h3><p>off = analyze only, much faster</p></div>
+        <button class="toggle" id="set-split" aria-pressed="true" aria-label="Split stems"></button></div>
+      <div class="dip"><div><h3>Stem model</h3><p>6 stems adds guitar and piano</p></div>
+        <div class="sel" id="set-model"><button data-v="htdemucs" aria-pressed="true">4</button><button data-v="htdemucs_6s" aria-pressed="false">6</button></div></div>
+      <div class="dip"><div><h3>Tempo range</h3><p>folds guesses into your lane</p></div>
+        <div class="sel" id="set-range"><button data-v="60,120" aria-pressed="false">60-120</button><button data-v="70,180" aria-pressed="true">70-180</button></div></div>
+      <div class="dip"><div><h3>Half / double</h3><p>show the other tempo reads</p></div>
+        <button class="toggle" id="set-hd" aria-pressed="true" aria-label="Show half and double time"></button></div>
+      <div class="dip"><div><h3>Beat grid</h3><p>dashed line every bar</p></div>
+        <button class="toggle" id="set-grid" aria-pressed="true" aria-label="Beat grid on waveform"></button></div>
+    </div>
+    <p class="empty">Changes apply to the next scan.</p>
+  </section>
+
+  <div class="foot silk"><span id="note">Local only · files delete after 24 h</span><span>MK1</span></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

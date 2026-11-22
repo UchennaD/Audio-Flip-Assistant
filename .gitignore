@@ -3,6 +3,10 @@ __pycache__/
 .venv/
 stems/
 midi/
+data/
+.pytest_cache/
 *.mp3
 *.wav
+*.flac
+*.m4a
 .env
